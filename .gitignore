@@ -1,0 +1,60 @@
+# Dependencias
+/node_modules
+/.pnp
+.pnp.js
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de build
+/.next/
+/out/
+/build/
+/dist/
+
+# Producción
+.env.production
+.env.local
+.env.development.local
+.env.test.local
+
+# Variables de entorno generales
+.env
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Coverage
+/coverage
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Archivos de configuración de TypeScript
+*.tsbuildinfo
+
+# Cache
+.cache/
+.next/cache/
+
+# Vercel
+.vercel
+
+# Archivos estáticos generados
+/public/build
+/public/static
+
+# Otros
+*.pem
