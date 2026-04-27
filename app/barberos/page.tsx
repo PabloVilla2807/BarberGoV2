@@ -123,7 +123,7 @@ export default function BarberosPage() {
               </div>
               <div className="h-px w-8 bg-secondary-foreground/30" />
             </div>
-            <h3 className="font-serif text-xl text-secondary-foreground tracking-wide">BARBER APP</h3>
+            <h3 className="font-serif text-xl text-secondary-foreground tracking-wide">BARBER GO</h3>
             <p className="text-secondary-foreground/50 text-xs tracking-widest uppercase">
               Tu corte, nuestra experiencia
             </p>

@@ -31,8 +31,8 @@ export default function LoginPage() {
         </div>
         
         {/* Logo estilo barbershop */}
-        <div className="mb-6">
-          <div className="w-20 h-28 mx-auto border-2 border-foreground/80 rounded-t-full flex flex-col items-center justify-end pb-2 relative">
+        {/* <div className="mb-6">
+          <div className="w-14 h-22 mx-auto border-2 border-foreground/80 rounded-t-full flex flex-col items-center justify-end pb-2 relative">
             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full border-2 border-foreground/60" />
             <div className="w-full px-2 space-y-1">
               <div className="h-0.5 bg-foreground/40" />
@@ -40,13 +40,13 @@ export default function LoginPage() {
               <div className="h-0.5 bg-foreground/40" />
             </div>
           </div>
-        </div>
+        </div> */}
 
         <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-wide text-foreground mb-2">
           BARBER
         </h1>
         <h2 className="font-sans text-xl md:text-2xl tracking-[0.3em] text-foreground/90 uppercase mb-4">
-          App
+          GO
         </h2>
         <p className="text-foreground/60 text-sm tracking-widest uppercase">
           &ldquo;Tu corte, nuestra experiencia&rdquo;
@@ -56,7 +56,7 @@ export default function LoginPage() {
       {/* Formulario */}
       <div className="flex-1 flex items-center justify-center px-4 pb-12">
         <div className="w-full max-w-sm">
-          <div className="border border-foreground/20 bg-card/30 backdrop-blur-sm p-8">
+          <div className="border border-foreground/20 bg-card/30 backdrop-blur-sm p-8" style={{borderRadius:'1rem'}}>
             <h3 className="font-serif text-xl text-center text-card-foreground mb-6 tracking-wide">
               Iniciar Sesion
             </h3>
@@ -81,7 +81,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <Label htmlFor="password" className="text-card-foreground/80 text-xs tracking-widest uppercase">
-                    Contrasena
+                    Contraseña
                   </Label>
                   <Link
                     href="#"
@@ -128,9 +128,9 @@ export default function LoginPage() {
           <div className="flex items-center justify-center gap-4 mt-8 text-foreground/40 text-xs tracking-widest">
             <span>EST</span>
             <div className="w-8 h-8 rounded-full border border-foreground/30 flex items-center justify-center">
-              <span className="font-serif text-xs">BA</span>
+              <span className="font-serif text-xs">BC</span>
             </div>
-            <span>2024</span>
+            <span>2026</span>
           </div>
         </div>
       </div>

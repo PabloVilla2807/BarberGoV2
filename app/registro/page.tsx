@@ -52,7 +52,7 @@ export default function RegistroPage() {
         </div>
 
         {/* Form Card */}
-        <div className="border border-foreground/20 bg-card/30 backdrop-blur-sm p-6">
+        <div className="border border-foreground/20 bg-card/30 backdrop-blur-sm p-6" style={{borderRadius:'1rem'}}>
           <Tabs value={userType} onValueChange={(v) => setUserType(v as UserType)}>
             <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary/50">
               <TabsTrigger 
