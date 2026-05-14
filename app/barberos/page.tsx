@@ -1,14 +1,64 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SearchBar } from '@/components/search-bar'
 import { BarberList } from '@/components/barber-list'
-import { barbers } from '@/lib/mock-data'
+import { AppointmentsList } from '@/components/appointments-list'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Scissors, Users, Star, MapPin } from 'lucide-react'
+import type { Appointment, Barber } from '@/lib/types'
 
 export default function BarberosPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCity, setSelectedCity] = useState('all')
+  const [activeTab, setActiveTab] = useState('barbers')
+  const [barbers, setBarbers] = useState<Barber[]>([])
+  const [cities, setCities] = useState<string[]>([])
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [isLoadingData, setIsLoadingData] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoadingData(true)
+      setErrorMessage('')
+
+      try {
+        const [barbersResponse, citiesResponse, appointmentsResponse] =
+          await Promise.all([
+            fetch('/api/barbers', { cache: 'no-store' }),
+            fetch('/api/cities', { cache: 'no-store' }),
+            fetch('/api/appointments', { cache: 'no-store' }),
+          ])
+
+        if (
+          !barbersResponse.ok ||
+          !citiesResponse.ok ||
+          !appointmentsResponse.ok
+        ) {
+          throw new Error('Error while reading API data')
+        }
+
+        const barbersPayload = (await barbersResponse.json()) as { data: Barber[] }
+        const citiesPayload = (await citiesResponse.json()) as { data: string[] }
+        const appointmentsPayload = (await appointmentsResponse.json()) as {
+          data: Appointment[]
+        }
+
+        setBarbers(barbersPayload.data)
+        setCities(citiesPayload.data)
+        setAppointments(appointmentsPayload.data)
+      } catch {
+        setErrorMessage(
+          'No se pudo conectar con MongoDB Atlas. Verifica MONGODB_URI y MONGODB_DB.',
+        )
+      } finally {
+        setIsLoadingData(false)
+      }
+    }
+
+    void fetchData()
+  }, [])
 
   const filteredBarbers = useMemo(() => {
     return barbers
@@ -21,7 +71,53 @@ export default function BarberosPage() {
         return matchesSearch && matchesCity
       })
       .sort((a, b) => (a.distance || 0) - (b.distance || 0))
-  }, [searchTerm, selectedCity])
+  }, [barbers, searchTerm, selectedCity])
+
+  const sortedAppointments = useMemo(() => {
+    return [...appointments].sort((a, b) => {
+      const left = new Date(`${a.date}T${a.time}:00`).getTime()
+      const right = new Date(`${b.date}T${b.time}:00`).getTime()
+      return left - right
+    })
+  }, [appointments])
+
+  const handleCreateAppointment = async (appointment: Appointment) => {
+    try {
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(appointment),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create appointment')
+      }
+
+      const payload = (await response.json()) as { data: Appointment }
+      setAppointments((current) => [...current, payload.data])
+      setActiveTab('appointments')
+    } catch {
+      setErrorMessage('No se pudo guardar la cita en MongoDB Atlas.')
+    }
+  }
+
+  const handleCancelAppointment = async (appointmentId: string) => {
+    try {
+      const response = await fetch(`/api/appointments/${appointmentId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete appointment')
+      }
+
+      setAppointments((current) =>
+        current.filter((appointment) => appointment.id !== appointmentId),
+      )
+    } catch {
+      setErrorMessage('No se pudo cancelar la cita en MongoDB Atlas.')
+    }
+  }
 
   const isFiltered = searchTerm !== '' || selectedCity !== 'all'
 
@@ -32,6 +128,7 @@ export default function BarberosPage() {
         setSearchTerm={setSearchTerm}
         selectedCity={selectedCity}
         setSelectedCity={setSelectedCity}
+        cities={cities}
       />
 
       {/* Hero Section */}
@@ -96,20 +193,69 @@ export default function BarberosPage() {
 
       {/* Barbers Section */}
       <main className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h2 className="font-serif text-2xl font-bold text-foreground tracking-wide">
-              {isFiltered ? 'Resultados' : 'Barberos Destacados'}
-            </h2>
-            <p className="text-muted-foreground text-sm tracking-wide mt-1">
-              {filteredBarbers.length} barbero{filteredBarbers.length !== 1 && 's'}{' '}
-              {isFiltered ? 'encontrado' : 'disponible'}{filteredBarbers.length !== 1 && 's'}
-              {selectedCity !== 'all' && ` en ${selectedCity}`}
-            </p>
+        {errorMessage && (
+          <div className="mb-6 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {errorMessage}
           </div>
-        </div>
+        )}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-8 h-11 bg-secondary/60">
+            <TabsTrigger
+              value="barbers"
+              className="px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Barberos
+            </TabsTrigger>
+            <TabsTrigger
+              value="appointments"
+              className="px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
+              Mis Citas ({appointments.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <BarberList barbers={filteredBarbers} isFiltered={isFiltered} />
+          <TabsContent value="barbers">
+            {isLoadingData && (
+              <p className="text-sm text-muted-foreground mb-4">Cargando datos desde MongoDB...</p>
+            )}
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-foreground tracking-wide">
+                  {isFiltered ? 'Resultados' : 'Barberos Destacados'}
+                </h2>
+                <p className="text-muted-foreground text-sm tracking-wide mt-1">
+                  {filteredBarbers.length} barbero{filteredBarbers.length !== 1 && 's'}{' '}
+                  {isFiltered ? 'encontrado' : 'disponible'}
+                  {filteredBarbers.length !== 1 && 's'}
+                  {selectedCity !== 'all' && ` en ${selectedCity}`}
+                </p>
+              </div>
+            </div>
+
+            <BarberList
+              barbers={filteredBarbers}
+              isFiltered={isFiltered}
+              appointments={appointments}
+              onCreateAppointment={handleCreateAppointment}
+            />
+          </TabsContent>
+
+          <TabsContent value="appointments">
+            <div className="mb-8">
+              <h2 className="font-serif text-2xl font-bold text-foreground tracking-wide">
+                Citas Creadas
+              </h2>
+              <p className="text-muted-foreground text-sm tracking-wide mt-1">
+                Administra tus reservaciones y horarios confirmados.
+              </p>
+            </div>
+
+            <AppointmentsList
+              appointments={sortedAppointments}
+              onCancelAppointment={handleCancelAppointment}
+            />
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Footer */}

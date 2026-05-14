@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { Search, MapPin, Scissors } from 'lucide-react'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
@@ -11,13 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cities } from '@/lib/mock-data'
-
 interface SearchBarProps {
   searchTerm: string
   setSearchTerm: (term: string) => void
   selectedCity: string
   setSelectedCity: (city: string) => void
+  cities: string[]
 }
 
 export function SearchBar({
@@ -25,7 +25,16 @@ export function SearchBar({
   setSearchTerm,
   selectedCity,
   setSelectedCity,
+  cities,
 }: SearchBarProps) {
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/')
+    router.refresh()
+  }
+
   return (
     <div className="sticky top-0 z-50 bg-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-4">
@@ -34,8 +43,15 @@ export function SearchBar({
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-full border-2 border-card-foreground/60 flex items-center justify-center">
+                {/* <Image
+                  src="/barbergologo3.svg"
+                  alt="BarberGo logo"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                /> */}
                 <Image
-                  src="/barbergo-logo-transparent.png"
+                  src="/BGlogo.svg"
                   alt="BarberGo logo"
                   width={32}
                   height={32}
@@ -86,11 +102,12 @@ export function SearchBar({
             >
               <a href="/registro">Registrarse</a>
             </Button> */}
-            <Button 
-              className="flex-1 md:flex-none bg-primary text-primary-foreground hover:bg-primary/90 tracking-wider uppercase text-xs" 
-              asChild
+            <Button
+              type="button"
+              className="flex-1 md:flex-none bg-primary text-primary-foreground hover:bg-primary/90 tracking-wider uppercase text-xs"
+              onClick={() => void handleSignOut()}
             >
-              <a href="/">Salir</a>
+              Salir
             </Button>
           </div>
         </div>
