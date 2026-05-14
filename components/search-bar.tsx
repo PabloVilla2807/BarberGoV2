@@ -1,6 +1,8 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { Search, MapPin, Scissors } from 'lucide-react'
+import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,13 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cities } from '@/lib/mock-data'
-
 interface SearchBarProps {
   searchTerm: string
   setSearchTerm: (term: string) => void
   selectedCity: string
   setSelectedCity: (city: string) => void
+  cities: string[]
 }
 
 export function SearchBar({
@@ -24,7 +25,16 @@ export function SearchBar({
   setSearchTerm,
   selectedCity,
   setSelectedCity,
+  cities,
 }: SearchBarProps) {
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/')
+    router.refresh()
+  }
+
   return (
     <div className="sticky top-0 z-50 bg-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-4">
@@ -33,7 +43,20 @@ export function SearchBar({
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-full border-2 border-card-foreground/60 flex items-center justify-center">
-                <Scissors className="h-4 w-4 text-card-foreground" />
+                {/* <Image
+                  src="/barbergologo3.svg"
+                  alt="BarberGo logo"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                /> */}
+                <Image
+                  src="/BGlogo.svg"
+                  alt="BarberGo logo"
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 object-contain"
+                />
               </div>
               <div>
                 <span className="font-serif text-lg text-card-foreground tracking-wide block leading-tight">BARBER</span>
@@ -50,12 +73,12 @@ export function SearchBar({
                 placeholder="Buscar barbero..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-input/50 border-border text-card-foreground placeholder:text-muted-foreground"
+                className="pl-10 border-border text-card-foreground placeholder:text-muted-foreground"
               />
             </div>
             
             <Select value={selectedCity} onValueChange={setSelectedCity}>
-              <SelectTrigger className="w-[180px] bg-input/50 border-border text-card-foreground">
+              <SelectTrigger className="bg-input/50 border-border text-card-foreground">
                 <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
                 <SelectValue placeholder="Ubicacion" />
               </SelectTrigger>
@@ -72,18 +95,19 @@ export function SearchBar({
           
           {/* Actions */}
           <div className="flex gap-2 w-full md:w-auto">
-            <Button 
+            {/* <Button 
               variant="outline" 
               className="flex-1 md:flex-none border-card-foreground/30 text-card-foreground hover:bg-card-foreground/10 tracking-wider uppercase text-xs" 
               asChild
             >
               <a href="/registro">Registrarse</a>
-            </Button>
-            <Button 
-              className="flex-1 md:flex-none bg-primary text-primary-foreground hover:bg-primary/90 tracking-wider uppercase text-xs" 
-              asChild
+            </Button> */}
+            <Button
+              type="button"
+              className="flex-1 md:flex-none bg-primary text-primary-foreground hover:bg-primary/90 tracking-wider uppercase text-xs"
+              onClick={() => void handleSignOut()}
             >
-              <a href="/">Salir</a>
+              Salir
             </Button>
           </div>
         </div>
