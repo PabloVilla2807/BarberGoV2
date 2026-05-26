@@ -62,7 +62,7 @@ export default function LoginPage() {
         </div>
 
         <Image
-          src="/barbergologo3.svg"
+          src="/Barbergologo3.svg"
           alt="BarberGo"
           width={200}
           height={200}
