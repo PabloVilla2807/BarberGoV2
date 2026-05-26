@@ -1,15 +1,22 @@
 'use client'
 
 import { BarberCard } from './barber-card'
-import type { Barber } from '@/lib/types'
+import type { Appointment, Barber } from '@/lib/types'
 import { Scissors } from 'lucide-react'
 
 interface BarberListProps {
   barbers: Barber[]
   isFiltered: boolean
+  appointments: Appointment[]
+  onCreateAppointment: (appointment: Appointment) => void
 }
 
-export function BarberList({ barbers, isFiltered }: BarberListProps) {
+export function BarberList({
+  barbers,
+  isFiltered,
+  appointments,
+  onCreateAppointment,
+}: BarberListProps) {
   if (barbers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -31,7 +38,12 @@ export function BarberList({ barbers, isFiltered }: BarberListProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {barbers.map((barber) => (
-        <BarberCard key={barber.id} barber={barber} />
+        <BarberCard
+          key={barber.id}
+          barber={barber}
+          appointments={appointments}
+          onCreateAppointment={onCreateAppointment}
+        />
       ))}
     </div>
   )
