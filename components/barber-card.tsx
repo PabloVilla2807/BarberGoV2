@@ -165,7 +165,7 @@ export function BarberCard({
           <span className="text-muted-foreground text-xs">({barber.reviewCount})</span>
         </div>
         
-        {barber.distance && (
+        {barber.distance !== undefined && (
           <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-sm text-primary-foreground rounded-sm px-2 py-1 text-xs tracking-wider uppercase">
             {barber.distance} km
           </div>
@@ -293,7 +293,7 @@ export function BarberCard({
                   onClick={handleBookAppointment}
                   disabled={!selectedDate || !selectedTime}
                 >
-                  Confirmar reservacion
+                  Crear reservacion
                 </Button>
                 <Button
                   type="button"

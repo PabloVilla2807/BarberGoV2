@@ -10,12 +10,14 @@ export const barbers: Barber[] = [
     specialties: ['Fade', 'Barba', 'Diseños'],
     location: 'Av. Principal 123, Centro',
     city: 'Tijuana',
+    latitude: 32.532,
+    longitude: -117.039,
     distance: 0.5,
     priceRange: '$15 - $35',
     yearsExperience: 8,
     bio: 'Especialista en cortes modernos y barba. Más de 8 años de experiencia creando estilos únicos.',
     availability: 'Lun-Sáb 9:00-19:00',
-    phone: '+34 612 345 678'
+    phone: '+34 612 345 678',
   },
   {
     id: '2',
@@ -26,12 +28,14 @@ export const barbers: Barber[] = [
     specialties: ['Clásico', 'Afeitado', 'Tratamientos'],
     location: 'Calle Luna 45, Barrio Norte',
     city: 'Tijuana',
+    latitude: 32.518,
+    longitude: -117.025,
     distance: 1.2,
     priceRange: '$12 - $30',
     yearsExperience: 12,
     bio: 'Barbero tradicional con técnicas clásicas y modernas. Experto en afeitado con navaja.',
     availability: 'Mar-Dom 10:00-20:00',
-    phone: '+34 623 456 789'
+    phone: '+34 623 456 789',
   },
   {
     id: '3',
@@ -42,12 +46,14 @@ export const barbers: Barber[] = [
     specialties: ['Degradado', 'Coloración', 'Texturas'],
     location: 'Plaza Mayor 8, Zona Sur',
     city: 'Tijuana',
+    latitude: 32.505,
+    longitude: -117.055,
     distance: 2.3,
     priceRange: '$18 - $45',
     yearsExperience: 6,
     bio: 'Artista del cabello especializado en técnicas de degradado y coloración masculina.',
     availability: 'Lun-Vie 8:00-18:00',
-    phone: '+34 634 567 890'
+    phone: '+34 634 567 890',
   },
   {
     id: '4',
@@ -58,12 +64,14 @@ export const barbers: Barber[] = [
     specialties: ['Premium', 'Spa Capilar', 'Estilismo'],
     location: 'Av. Diagonal 567, Eixample',
     city: 'Tijuana',
+    latitude: 32.528,
+    longitude: -117.012,
     distance: 3.1,
     priceRange: '$25 - $60',
     yearsExperience: 15,
     bio: 'Estilista premium con formación internacional. Experiencia en tratamientos capilares exclusivos.',
     availability: 'Lun-Sáb 9:00-21:00',
-    phone: '+34 645 678 901'
+    phone: '+34 645 678 901',
   },
   {
     id: '5',
@@ -74,12 +82,14 @@ export const barbers: Barber[] = [
     specialties: ['Corte Moderno', 'Barba Hipster', 'Cejas'],
     location: 'Calle Gran Vía 234',
     city: 'Tijuana',
+    latitude: 32.497,
+    longitude: -117.041,
     distance: 4.5,
     priceRange: '$10 - $25',
     yearsExperience: 4,
     bio: 'Joven barbero apasionado por las tendencias actuales. Especialista en looks urbanos.',
     availability: 'Mié-Dom 11:00-19:00',
-    phone: '+34 656 789 012'
+    phone: '+34 656 789 012',
   },
   {
     id: '6',
@@ -90,12 +100,14 @@ export const barbers: Barber[] = [
     specialties: ['Tradicional', 'Navaja', 'Masajes'],
     location: 'Paseo Marítimo 12',
     city: 'Tijuana',
+    latitude: 32.521,
+    longitude: -117.068,
     distance: 5.2,
     priceRange: '$14 - $35',
     yearsExperience: 20,
     bio: 'Maestro barbero con dos décadas de experiencia. Técnicas tradicionales con toque moderno.',
     availability: 'Lun-Sáb 8:00-17:00',
-    phone: '+34 667 890 123'
+    phone: '+34 667 890 123',
   },
   {
     id: '7',
@@ -106,12 +118,14 @@ export const barbers: Barber[] = [
     specialties: ['Juvenil', 'Tintes', 'Mechas'],
     location: 'Calle Real 78, Centro',
     city: 'Tijuana',
+    latitude: 32.512,
+    longitude: -117.033,
     distance: 1.8,
     priceRange: '$12 - $40',
     yearsExperience: 7,
     bio: 'Especialista en looks juveniles y coloración. Siempre actualizado con las últimas tendencias.',
     availability: 'Mar-Sáb 10:00-20:00',
-    phone: '+34 678 901 234'
+    phone: '+34 678 901 234',
   },
   {
     id: '8',
@@ -122,13 +136,15 @@ export const barbers: Barber[] = [
     specialties: ['Ejecutivo', 'Rapado', 'Perfilado'],
     location: 'Av. Constitución 45',
     city: 'Ensenada',
+    latitude: 31.871,
+    longitude: -116.602,
     distance: 2.9,
     priceRange: '$15 - $30',
     yearsExperience: 10,
     bio: 'Barbero profesional especializado en cortes ejecutivos y looks corporativos impecables.',
     availability: 'Lun-Vie 7:00-16:00',
-    phone: '+34 689 012 345'
-  }
+    phone: '+34 689 012 345',
+  },
 ]
 
-export const cities = ['Tijuana', 'Mexicali', 'Ensenada', 'Tepic', 'La Paz', 'Mazatlán'];
+export const cities = ['Tijuana', 'Mexicali', 'Ensenada', 'Tepic', 'La Paz', 'Mazatlán']

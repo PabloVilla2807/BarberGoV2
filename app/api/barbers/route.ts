@@ -71,6 +71,9 @@ export async function POST(request: Request) {
       yearsExperience,
       priceRange,
       password,
+      latitude,
+      longitude,
+      photo,
     } = parsed.data
     const normalizedEmail = normalizeEmail(email)
 
@@ -81,18 +84,22 @@ export async function POST(request: Request) {
       )
     }
 
+    const city = extractCityFromLocation(location)
+
     const barber: BarberRecord = {
       id: randomUUID(),
       name: name.trim(),
       email: normalizedEmail,
       phone: phone.trim(),
       location: location.trim(),
-      city: extractCityFromLocation(location),
+      city,
+      latitude,
+      longitude,
       specialties: parseSpecialties(specialties),
       bio: bio?.trim() || '',
       yearsExperience,
       priceRange: priceRange.trim(),
-      photo: DEFAULT_BARBER_PHOTO,
+      photo: photo?.trim() || DEFAULT_BARBER_PHOTO,
       rating: 0,
       reviewCount: 0,
       availability: 'Por confirmar',

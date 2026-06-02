@@ -7,6 +7,8 @@ export interface Barber {
   specialties: string[]
   location: string
   city: string
+  latitude?: number
+  longitude?: number
   distance?: number
   priceRange: string
   yearsExperience: number

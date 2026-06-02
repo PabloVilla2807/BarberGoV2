@@ -34,6 +34,19 @@ export const barberRegistrationSchema = z
       .int('Los anos de experiencia deben ser un numero entero.')
       .min(0, 'Los anos de experiencia no pueden ser negativos.'),
     priceRange: z.string().trim().min(1, 'El rango de precios es obligatorio.'),
+    latitude: z.number({ invalid_type_error: 'Confirma tu ubicacion en el mapa.' }),
+    longitude: z.number({ invalid_type_error: 'Confirma tu ubicacion en el mapa.' }),
+    photo: z
+      .string()
+      .trim()
+      .refine(
+        (value) =>
+          value.startsWith('data:image/') ||
+          value.startsWith('http://') ||
+          value.startsWith('https://'),
+        { message: 'La foto no es valida.' },
+      )
+      .optional(),
     password: passwordSchema,
     passwordConfirm: passwordSchema,
   })

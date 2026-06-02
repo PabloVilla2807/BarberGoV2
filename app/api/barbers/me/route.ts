@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getDatabase } from '@/lib/mongodb'
 import { getSession } from '@/lib/get-session'
 import { extractCityFromLocation, parseSpecialties } from '@/lib/register'
+import { getCityCoordinates } from '@/lib/geo'
 import type { Barber } from '@/lib/types'
 
 interface BarberRecord extends Barber {
@@ -92,6 +93,11 @@ export async function PATCH(request: Request) {
     if (data.location !== undefined) {
       patch.location = data.location
       patch.city = extractCityFromLocation(data.location)
+      const cityCoords = getCityCoordinates(patch.city)
+      if (cityCoords) {
+        patch.latitude = cityCoords.latitude
+        patch.longitude = cityCoords.longitude
+      }
     }
     if (data.specialties !== undefined) {
       patch.specialties =

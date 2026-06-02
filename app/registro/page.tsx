@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, User, Scissors, Mail, Lock, Phone, MapPin, Camera } from 'lucide-react'
+import { ArrowLeft, User, Scissors, Mail, Lock, Phone, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
+import { LocationPickerDialog } from '@/components/location-picker-dialog'
+import { PhotoUpload } from '@/components/photo-upload'
 import type { UserType } from '@/lib/types'
 
 const initialClientForm = {
@@ -28,6 +30,10 @@ const initialBarberForm = {
   bio: '',
   yearsExperience: '',
   priceRange: '',
+  latitude: null as number | null,
+  longitude: null as number | null,
+  locationConfirmed: false,
+  photo: null as string | null,
   password: '',
   passwordConfirm: '',
 }
@@ -39,6 +45,8 @@ export default function RegistroPage() {
   const [barberForm, setBarberForm] = useState(initialBarberForm)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false)
+  const [photoError, setPhotoError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,13 +54,28 @@ export default function RegistroPage() {
     setIsSubmitting(true)
 
     try {
+      if (userType === 'barber' && !barberForm.locationConfirmed) {
+        throw new Error('Confirma la ubicacion de tu barberia en el mapa.')
+      }
+
       const endpoint = userType === 'client' ? '/api/clients' : '/api/barbers'
       const payload =
         userType === 'client'
           ? clientForm
           : {
-              ...barberForm,
+              name: barberForm.name,
+              email: barberForm.email,
+              phone: barberForm.phone,
+              location: barberForm.location,
+              specialties: barberForm.specialties,
+              bio: barberForm.bio,
               yearsExperience: Number(barberForm.yearsExperience),
+              priceRange: barberForm.priceRange,
+              password: barberForm.password,
+              passwordConfirm: barberForm.passwordConfirm,
+              latitude: barberForm.latitude,
+              longitude: barberForm.longitude,
+              ...(barberForm.photo ? { photo: barberForm.photo } : {}),
             }
 
       const response = await fetch(endpoint, {
@@ -269,11 +292,20 @@ export default function RegistroPage() {
               </TabsContent>
 
               <TabsContent value="barber" className="space-y-4">
-                <div className="flex justify-center mb-4">
-                  <div className="w-24 h-24 bg-secondary/50 border-2 border-dashed border-foreground/30 rounded-full flex items-center justify-center">
-                    <Camera className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                </div>
+                <PhotoUpload
+                  value={barberForm.photo}
+                  onChange={(photo) =>
+                    setBarberForm((current) => ({
+                      ...current,
+                      photo,
+                    }))
+                  }
+                  onError={setPhotoError}
+                  disabled={isSubmitting}
+                />
+                {photoError && (
+                  <p className="text-center text-sm text-destructive">{photoError}</p>
+                )}
 
                 <div className="space-y-2">
                   <Label
@@ -366,12 +398,49 @@ export default function RegistroPage() {
                         setBarberForm((current) => ({
                           ...current,
                           location: event.target.value,
+                          latitude: null,
+                          longitude: null,
+                          locationConfirmed: false,
                         }))
                       }
                       className="pl-10 bg-input/50 border-foreground/30 text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => setIsLocationPickerOpen(true)}
+                    >
+                      <MapPin className="h-3.5 w-3.5 mr-1.5" />
+                      Confirmar en mapa
+                    </Button>
+                    {barberForm.locationConfirmed && (
+                      <span className="text-xs text-green-700 dark:text-green-400">
+                        Ubicacion confirmada en el mapa
+                      </span>
+                    )}
+                  </div>
                 </div>
+
+                <LocationPickerDialog
+                  open={isLocationPickerOpen}
+                  onOpenChange={setIsLocationPickerOpen}
+                  address={barberForm.location}
+                  latitude={barberForm.latitude}
+                  longitude={barberForm.longitude}
+                  onConfirm={({ latitude, longitude, address }) =>
+                    setBarberForm((current) => ({
+                      ...current,
+                      location: address,
+                      latitude,
+                      longitude,
+                      locationConfirmed: true,
+                    }))
+                  }
+                />
 
                 <div className="space-y-2">
                   <Label

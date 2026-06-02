@@ -3,10 +3,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { SearchBar } from '@/components/search-bar'
 import { BarberList } from '@/components/barber-list'
+import { BarbersMap } from '@/components/barbers-map'
 import { AppointmentsList } from '@/components/appointments-list'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Scissors, Users, Star, MapPin } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Scissors, Users, Star, MapPin, Navigation } from 'lucide-react'
 import type { Appointment, Barber } from '@/lib/types'
+import { useUserLocation } from '@/hooks/use-user-location'
+import { computeBarberDistanceKm } from '@/lib/geo'
 
 export default function BarberosPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -17,6 +21,12 @@ export default function BarberosPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const {
+    location: userLocation,
+    status: locationStatus,
+    errorMessage: locationError,
+    requestLocation,
+  } = useUserLocation()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,17 +71,32 @@ export default function BarberosPage() {
   }, [])
 
   const filteredBarbers = useMemo(() => {
-    return barbers
-      .filter((barber) => {
-        const matchesSearch = barber.name
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-        const matchesCity =
-          selectedCity === 'all' || barber.city === selectedCity
-        return matchesSearch && matchesCity
-      })
-      .sort((a, b) => (a.distance || 0) - (b.distance || 0))
-  }, [barbers, searchTerm, selectedCity])
+    const filtered = barbers.filter((barber) => {
+      const matchesSearch = barber.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+      const matchesCity =
+        selectedCity === 'all' || barber.city === selectedCity
+      return matchesSearch && matchesCity
+    })
+
+    const withDistance = filtered.map((barber) => {
+      if (!userLocation) {
+        return barber
+      }
+      const km = computeBarberDistanceKm(userLocation, barber)
+      if (km === null) {
+        return barber
+      }
+      return { ...barber, distance: km }
+    })
+
+    return withDistance.sort((a, b) => {
+      const left = a.distance ?? Number.POSITIVE_INFINITY
+      const right = b.distance ?? Number.POSITIVE_INFINITY
+      return left - right
+    })
+  }, [barbers, searchTerm, selectedCity, userLocation])
 
   const sortedAppointments = useMemo(() => {
     return [...appointments].sort((a, b) => {
@@ -191,6 +216,15 @@ export default function BarberosPage() {
         </div>
       </section>
 
+      <section className="max-w-7xl mx-auto px-4 py-8 border-b border-border">
+        <BarbersMap
+          barbers={filteredBarbers}
+          userLocation={userLocation}
+          locationStatus={locationStatus}
+          onRequestLocation={requestLocation}
+        />
+      </section>
+
       {/* Barbers Section */}
       <main className="max-w-7xl mx-auto px-4 py-12">
         {errorMessage && (
@@ -218,6 +252,38 @@ export default function BarberosPage() {
             {isLoadingData && (
               <p className="text-sm text-muted-foreground mb-4">Cargando datos desde MongoDB...</p>
             )}
+
+            {locationStatus === 'loading' && (
+              <p className="text-sm text-muted-foreground mb-4 flex items-center gap-2">
+                <Navigation className="h-4 w-4 animate-pulse" />
+                Obteniendo tu ubicacion para ordenar barberos cercanos...
+              </p>
+            )}
+            {locationStatus === 'granted' && userLocation && (
+              <p className="text-sm text-muted-foreground mb-4 flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                Mostrando barberos ordenados por cercania a tu ubicacion.
+              </p>
+            )}
+            {(locationStatus === 'denied' || locationStatus === 'unsupported') && (
+              <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border border-border bg-muted/40 px-4 py-3 text-sm">
+                <span className="text-muted-foreground">
+                  {locationError ||
+                    'Activa la ubicacion para ver primero a los barberos mas cercanos.'}
+                </span>
+                {locationStatus === 'denied' && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={requestLocation}
+                  >
+                    Usar mi ubicacion
+                  </Button>
+                )}
+              </div>
+            )}
+
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h2 className="font-serif text-2xl font-bold text-foreground tracking-wide">
