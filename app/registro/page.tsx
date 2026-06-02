@@ -227,7 +227,7 @@ export default function RegistroPage() {
                     <Input
                       id="client-phone"
                       type="tel"
-                      placeholder="+34 612 345 678"
+                      placeholder="+ 52 6641234567"
                       value={clientForm.phone}
                       onChange={(event) =>
                         setClientForm((current) => ({
@@ -368,7 +368,7 @@ export default function RegistroPage() {
                     <Input
                       id="barber-phone"
                       type="tel"
-                      placeholder="+34 612 345 678"
+                      placeholder="+ 52 6641234567"
                       value={barberForm.phone}
                       onChange={(event) =>
                         setBarberForm((current) => ({
@@ -517,7 +517,7 @@ export default function RegistroPage() {
                     </Label>
                     <Input
                       id="barber-price"
-                      placeholder="15 - 35 EUR"
+                      placeholder="200 - 300 MXN"
                       value={barberForm.priceRange}
                       onChange={(event) =>
                         setBarberForm((current) => ({
